@@ -40,7 +40,13 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
         return NIELSEN_DTVR_KEY;
     }
 
-    // object construction method to facilitate testing
+    /**
+     * object construction method to facilitate testing
+     *
+     * @param appContext application context
+     * @param appSdkConfig parameters for initializing the Nielsen App SDK
+     * @return new instance of an AppSdk
+     */
     AppSdk createAppSdk(Context appContext, JSONObject appSdkConfig) {
         return new AppSdk(appContext, appSdkConfig, null);
     }
