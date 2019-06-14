@@ -22,7 +22,7 @@ class AnalyticsController {
     }
 
     void trackSeekCompleted() {
-        trackPlay("Video Seek Completed");
+        trackPlay("Video Playback Seek Completed");
     }
 
     void trackBufferCompleted() {
