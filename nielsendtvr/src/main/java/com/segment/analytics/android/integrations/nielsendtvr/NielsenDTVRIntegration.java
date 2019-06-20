@@ -41,16 +41,19 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
             case "Video Content Completed":
             case "Video Playback Buffer Started":
             case "Video Playback Seek Started":
-                appSdk.stop();
+                stop();
                 break;
             case "Video Playback Completed":
-                appSdk.end();
+                end();
                 break;
             case "Application Backgrounded":
-                appSdk.stop();
+                stop();
         }
     }
 
+    /**
+     * @param  trackPayload payload of the Segment track event
+     */
     private void play(TrackPayload trackPayload) {
         Properties properties = trackPayload.properties();
         JSONObject channelInfo = new JSONObject();
@@ -63,9 +66,13 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
             logger.error(e, "Failed to send play event");
         }
 
+        logger.debug("appSdk.play(%s)", channelInfo);
         appSdk.play(channelInfo);
     }
 
+    /**
+     * @param  trackPayload payload of the Segment track event
+     */
     private void loadMetadata(TrackPayload trackPayload) {
         Properties properties = trackPayload.properties();
         JSONObject jsonMetadata = new JSONObject();
@@ -83,7 +90,18 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
             logger.error(e, "Failed to send loadMetadata event");
         }
 
+        logger.debug("appSdk.loadMetadata(%s)", jsonMetadata);
         appSdk.loadMetadata(jsonMetadata);
+    }
+
+    private void stop() {
+        logger.debug("appSdk.stop()");
+        appSdk.stop();
+    }
+
+    private void end() {
+        logger.debug("appSdk.end()");
+        appSdk.end();
     }
 
     // TODO: clarify ID3 behaviour

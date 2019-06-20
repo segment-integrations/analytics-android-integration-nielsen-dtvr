@@ -1,5 +1,7 @@
 package com.segment.analytics.android.integrations.nielsendtvr;
 
+import android.content.Context;
+
 import com.nielsen.app.sdk.AppSdk;
 import com.segment.analytics.Analytics;
 import com.segment.analytics.Properties;
@@ -68,7 +70,7 @@ public class NielsenDTVRIntegrationTest {
     @Test
     public void factory() throws Exception {
         when(analytics.getApplication()).thenReturn(null);
-        when(factory.create(any(), any())).thenCallRealMethod();
+        when(factory.create((ValueMap) any(), (Analytics) any())).thenCallRealMethod();
 
         ValueMap settings = new ValueMap();
         settings.put("appid", "123");
@@ -80,7 +82,7 @@ public class NielsenDTVRIntegrationTest {
                 .put("appid", "123")
                 .put("sfcode", "1234");
 
-        verify(factory).createAppSdk(isNull(), matchJSON(expectedConfig));
+        verify(factory).createAppSdk((Context) isNull(), matchJSON(expectedConfig));
     }
 
     @Test
