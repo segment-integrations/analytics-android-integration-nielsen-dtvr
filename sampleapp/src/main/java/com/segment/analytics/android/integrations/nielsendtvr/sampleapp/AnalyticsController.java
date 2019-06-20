@@ -48,7 +48,7 @@ class AnalyticsController {
     }
 
     void trackSeekStarted() {
-        analytics.track("Video Playback Seek Started ");
+        analytics.track("Video Playback Seek Started");
     }
 
     void trackApplicationBackgrounded() {
