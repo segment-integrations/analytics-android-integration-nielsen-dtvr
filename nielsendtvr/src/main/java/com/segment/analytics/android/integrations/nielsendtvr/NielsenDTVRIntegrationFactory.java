@@ -16,6 +16,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.segment.analytics.internal.Utils.isNullOrEmpty;
+
 class NielsenDTVRIntegrationFactory implements Integration.Factory {
 
     private static final String NIELSEN_DTVR_KEY = "Nielsen DTVR";
@@ -35,7 +37,8 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
 
         @SuppressWarnings("unchecked")
         List<String> id3EventNames = (List<String>) settings.get(SETTING_ID3_EVENTS_KEY);
-        String id3PropertyName = settings.containsKey(SETTING_ID3_PROPERTY_KEY) ? settings.getString(SETTING_ID3_PROPERTY_KEY) : SETTING_ID3_PROPERTY_DEFAULT;
+        String id3Property = settings.getString(SETTING_ID3_PROPERTY_KEY);
+        String id3PropertyName = isNullOrEmpty(id3Property) ? SETTING_ID3_PROPERTY_DEFAULT : id3Property;
 
         return createNielsenIntegration(appSdk, logger, id3EventNames, id3PropertyName);
     }
