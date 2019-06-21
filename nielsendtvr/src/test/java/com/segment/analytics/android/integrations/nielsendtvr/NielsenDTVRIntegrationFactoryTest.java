@@ -20,6 +20,7 @@ import org.robolectric.annotation.Config;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -59,7 +60,7 @@ public class NielsenDTVRIntegrationFactoryTest {
 
         emptyInstances = new HashMap<>();
         maxInstances = new HashMap<>();
-        maxInstances.put(appid, Arrays.asList(appSdk, appSdk, appSdk, appSdk));
+        maxInstances.put(appid, new ArrayList<>(Arrays.asList(appSdk, appSdk, appSdk, appSdk)));
 
         settings = new ValueMap();
         settings.put(SETTING_APP_ID_KEY, appid);
@@ -109,9 +110,12 @@ public class NielsenDTVRIntegrationFactoryTest {
         assert(instancesForId == null);
 
         factory.saveAppSdk(appid, appSdk, emptyInstances);
-
         instancesForId = emptyInstances.get(appid);
         assert(instancesForId != null && instancesForId.size() == 1);
+
+        factory.saveAppSdk(appid, appSdk, maxInstances);
+        instancesForId = maxInstances.get(appid);
+        assert(instancesForId != null && instancesForId.size() == 5);
     }
 
     @Test
