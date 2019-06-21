@@ -58,4 +58,10 @@ class AnalyticsController {
     void trackEnd() {
         analytics.track("Video Playback Completed");
     }
+
+    void trackID3(String id3) {
+        analytics.track("sendID3",
+                new Properties()
+                        .putValue("Id3", id3));
+    }
 }

@@ -7,6 +7,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.MediaController;
 
+import java.nio.charset.StandardCharsets;
+
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_END;
 import static android.media.MediaPlayer.MEDIA_INFO_BUFFERING_START;
 import static android.media.MediaPlayer.OnPreparedListener;
@@ -120,6 +122,18 @@ public class VideoActivity extends AppCompatActivity implements OnPreparedListen
 
     @Override
     public void onTimedMetaDataAvailable(MediaPlayer mp, TimedMetaData data) {
-        // TODO: ID3 implementation
+        if (data != null && mp.isPlaying()) {
+            byte[] metadata = data.getMetaData();
+
+            if (metadata != null) {
+                String iD3Payload = new String(metadata, StandardCharsets.UTF_8);
+
+                int index = iD3Payload.indexOf("www.nielsen.com");
+                if (index != -1) {
+                    String id3String = iD3Payload.substring(index, (index + 249));
+                    analytics.trackID3(id3String);
+                }
+            }
+        }
     }
 }
