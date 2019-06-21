@@ -1,11 +1,8 @@
 package com.segment.analytics.android.integrations.nielsendtvr;
 
-import android.content.Context;
-
 import com.nielsen.app.sdk.AppSdk;
 import com.segment.analytics.Analytics;
 import com.segment.analytics.Properties;
-import com.segment.analytics.ValueMap;
 import com.segment.analytics.integrations.Logger;
 import com.segment.analytics.integrations.TrackPayload;
 
@@ -23,24 +20,29 @@ import org.robolectric.annotation.Config;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-import static org.mockito.ArgumentMatchers.any;
+import java.util.Arrays;
+import java.util.List;
+
+import static com.segment.analytics.android.integrations.nielsendtvr.NielsenDTVRIntegrationFactory.SETTING_ID3_PROPERTY_DEFAULT;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @RunWith(RobolectricTestRunner.class)
 @Config(manifest = Config.NONE)
 public class NielsenDTVRIntegrationTest {
     @Mock AppSdk appSdk;
-    @Mock Analytics analytics;
-    @Mock NielsenDTVRIntegrationFactory factory;
 
     private NielsenDTVRIntegration integration;
+    private TrackPayload.Builder basePayloadBuilder;
 
     private JSONObject matchJSON(JSONObject expected) {
         return argThat(new JSONMatcher(expected));
     }
+
+    private final List<String> id3EventNames = Arrays.asList("sendID3a", "sendID3b");
 
     class JSONMatcher implements ArgumentMatcher<JSONObject> {
         JSONObject expected;
@@ -64,25 +66,8 @@ public class NielsenDTVRIntegrationTest {
     public void init() {
         MockitoAnnotations.initMocks(this);
 
-        integration = new NielsenDTVRIntegration(appSdk, Logger.with(Analytics.LogLevel.DEBUG));
-    }
-
-    @Test
-    public void factory() throws Exception {
-        when(analytics.getApplication()).thenReturn(null);
-        when(factory.create((ValueMap) any(), (Analytics) any())).thenCallRealMethod();
-
-        ValueMap settings = new ValueMap();
-        settings.put("appid", "123");
-        settings.put("sfcode", "1234");
-
-        factory.create(settings, analytics);
-
-        JSONObject expectedConfig = new JSONObject()
-                .put("appid", "123")
-                .put("sfcode", "1234");
-
-        verify(factory).createAppSdk((Context) isNull(), matchJSON(expectedConfig));
+        integration = new NielsenDTVRIntegration(appSdk, Logger.with(Analytics.LogLevel.DEBUG), id3EventNames, SETTING_ID3_PROPERTY_DEFAULT);
+        basePayloadBuilder = new TrackPayload.Builder().anonymousId("1");
     }
 
     @Test
@@ -95,9 +80,8 @@ public class NielsenDTVRIntegrationTest {
                 .put("type", "content");
 
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Content Started")
-                        .anonymousId("1")
                         .properties(properties)
                         .build());
 
@@ -111,9 +95,8 @@ public class NielsenDTVRIntegrationTest {
         JSONObject expectedPlayConfig = new JSONObject().put("channelName", "ab");
 
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Playback Resumed")
-                        .anonymousId("1")
                         .properties(properties)
                         .build());
 
@@ -126,9 +109,8 @@ public class NielsenDTVRIntegrationTest {
         JSONObject expectedPlayConfig = new JSONObject().put("channelName", "abc");
 
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Playback Seek Completed")
-                        .anonymousId("1")
                         .properties(properties)
                         .build());
 
@@ -141,9 +123,8 @@ public class NielsenDTVRIntegrationTest {
         JSONObject expectedPlayConfig = new JSONObject().put("channelName", "abcd");
 
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Playback Buffer Completed")
-                        .anonymousId("1")
                         .properties(properties)
                         .build());
 
@@ -153,9 +134,8 @@ public class NielsenDTVRIntegrationTest {
     @Test
     public void videoPlaybackPaused() {
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Playback Paused")
-                        .anonymousId("1")
                         .build());
 
         verify(appSdk).stop();
@@ -164,9 +144,8 @@ public class NielsenDTVRIntegrationTest {
     @Test
     public void videoPlaybackInterrupted() {
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Playback Interrupted")
-                        .anonymousId("1")
                         .build());
 
         verify(appSdk).stop();
@@ -175,9 +154,8 @@ public class NielsenDTVRIntegrationTest {
     @Test
     public void videoContentCompleted() {
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Content Completed")
-                        .anonymousId("1")
                         .build());
 
         verify(appSdk).stop();
@@ -186,9 +164,8 @@ public class NielsenDTVRIntegrationTest {
     @Test
     public void videoPlaybackBufferStarted() {
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Playback Buffer Started")
-                        .anonymousId("1")
                         .build());
 
         verify(appSdk).stop();
@@ -197,9 +174,8 @@ public class NielsenDTVRIntegrationTest {
     @Test
     public void videoPlaybackSeekStarted() {
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Playback Seek Started")
-                        .anonymousId("1")
                         .build());
 
         verify(appSdk).stop();
@@ -208,9 +184,8 @@ public class NielsenDTVRIntegrationTest {
     @Test
     public void videoPlaybackCompleted() {
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Video Playback Completed")
-                        .anonymousId("1")
                         .build());
 
         verify(appSdk).end();
@@ -219,11 +194,45 @@ public class NielsenDTVRIntegrationTest {
     @Test
     public void applicationBackgrounded() {
         integration.track(
-                new TrackPayload.Builder()
+                basePayloadBuilder
                         .event("Application Backgrounded")
-                        .anonymousId("1")
                         .build());
 
         verify(appSdk).stop();
+    }
+
+    @Test
+    public void sendID3() {
+        String id3A = "testid3A";
+        String id3B = "testid3b";
+        Properties propertiesA = new Properties().putValue(SETTING_ID3_PROPERTY_DEFAULT, id3A);
+        Properties propertiesB = new Properties().putValue(SETTING_ID3_PROPERTY_DEFAULT, id3B);
+        TrackPayload payloadA = basePayloadBuilder
+                .event("sendID3a")
+                .properties(propertiesA)
+                .build();
+
+        TrackPayload payloadB = basePayloadBuilder
+                .event("sendID3a")
+                .properties(propertiesB)
+                .build();
+
+        integration.track(
+                basePayloadBuilder
+                        .event("not a sendID3")
+                        .properties(propertiesA)
+                        .build());
+
+        verify(appSdk, never()).sendID3(anyString());
+
+
+        integration.track(payloadA);
+        integration.track(payloadA);
+
+        verify(appSdk, times(1)).sendID3(id3A);
+
+        integration.track(payloadB);
+        verify(appSdk).sendID3(id3B);
+        verify(appSdk, times(2)).sendID3(anyString());
     }
 }

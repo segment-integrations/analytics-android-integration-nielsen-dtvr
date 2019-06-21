@@ -5,7 +5,7 @@ Nielsen DTVR integration for [analytics-android](https://github.com/segmentio/an
 
 ## Installation
 
-To install the Segment-Adjust integration, simply add this line to your gradle file:
+To install the Segment-Nielsen-DTVR integration, simply add this line to your gradle file:
 
 ```
 compile 'com.segment.analytics.android.integrations:nielsendtvr:+'

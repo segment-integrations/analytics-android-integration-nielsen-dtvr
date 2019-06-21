@@ -9,15 +9,22 @@ import com.nielsen.app.sdk.AppSdk;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.List;
+
 public class NielsenDTVRIntegration extends Integration<AppSdk> {
     public static final Factory FACTORY = new NielsenDTVRIntegrationFactory();
 
     private final AppSdk appSdk;
     private final Logger logger;
+    private final List<String> id3EventNames;
+    private final String id3PropertyName;
+    private String previousID3 = "";
 
-    NielsenDTVRIntegration(AppSdk appSdk, Logger logger) {
+    NielsenDTVRIntegration(AppSdk appSdk, Logger logger, List<String> id3EventNames, String id3PropertyName) {
         this.appSdk = appSdk;
         this.logger = logger;
+        this.id3EventNames = id3EventNames;
+        this.id3PropertyName = id3PropertyName;
     }
 
     @Override
@@ -28,13 +35,11 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
             case "Video Content Started":
                 play(trackPayload);
                 loadMetadata(trackPayload);
-                sendID3(trackPayload);
                 break;
             case "Video Playback Resumed":
             case "Video Playback Seek Completed":
             case "Video Playback Buffer Completed":
                 play(trackPayload);
-                sendID3(trackPayload);
                 break;
             case "Video Playback Paused":
             case "Video Playback Interrupted":
@@ -49,10 +54,14 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
             case "Application Backgrounded":
                 stop();
         }
+
+        if (id3EventNames.contains(event)) {
+            sendID3(trackPayload);
+        }
     }
 
     /**
-     * @param  trackPayload payload of the Segment track event
+     * @param trackPayload payload of the Segment track event
      */
     private void play(TrackPayload trackPayload) {
         Properties properties = trackPayload.properties();
@@ -71,7 +80,7 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
     }
 
     /**
-     * @param  trackPayload payload of the Segment track event
+     * @param trackPayload payload of the Segment track event
      */
     private void loadMetadata(TrackPayload trackPayload) {
         Properties properties = trackPayload.properties();
@@ -94,6 +103,20 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
         appSdk.loadMetadata(jsonMetadata);
     }
 
+    /**
+     * @param trackPayload payload of the Segment track event
+     */
+    private void sendID3(TrackPayload trackPayload) {
+        Properties properties = trackPayload.properties();
+        String id3 = properties.getString(id3PropertyName);
+
+        if (previousID3.equals(id3)) return;
+        previousID3 = id3;
+
+        logger.debug("appSdk.sendID3(%s)", id3);
+        appSdk.sendID3(id3);
+    }
+
     private void stop() {
         logger.debug("appSdk.stop()");
         appSdk.stop();
@@ -102,13 +125,6 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
     private void end() {
         logger.debug("appSdk.end()");
         appSdk.end();
-    }
-
-    // TODO: clarify ID3 behaviour
-    private void sendID3(TrackPayload trackPayload) {
-        Properties properties = trackPayload.properties();
-
-        appSdk.sendID3(properties.getString("ID3"));
     }
 
     @Override
