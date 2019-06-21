@@ -36,6 +36,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.reset;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -74,13 +75,19 @@ public class NielsenDTVRIntegrationFactoryTest {
         when(factory.create((ValueMap) any(), (Analytics) any())).thenCallRealMethod();
 
         factory.create(settings, analytics);
-
         verify(factory).createNielsenIntegration((AppSdk) any(), (Logger) any(), eq(id3EventNames), eq(SETTING_ID3_PROPERTY_DEFAULT));
+
+        settings.put(SETTING_ID3_PROPERTY_KEY, "");
+        factory.create(settings, analytics);
+        verify(factory, times(2)).createNielsenIntegration((AppSdk) any(), (Logger) any(), eq(id3EventNames), eq(SETTING_ID3_PROPERTY_DEFAULT));
+
+        settings.put(SETTING_ID3_PROPERTY_KEY, null);
+        factory.create(settings, analytics);
+        verify(factory, times(3)).createNielsenIntegration((AppSdk) any(), (Logger) any(), eq(id3EventNames), eq(SETTING_ID3_PROPERTY_DEFAULT));
 
         String id3Property = "ID33";
         settings.put(SETTING_ID3_PROPERTY_KEY, id3Property);
         factory.create(settings, analytics);
-
         verify(factory).createNielsenIntegration((AppSdk) any(), (Logger) any(), eq(id3EventNames), eq(id3Property));
     }
 
