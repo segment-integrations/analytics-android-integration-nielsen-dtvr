@@ -71,7 +71,6 @@ public class NielsenDTVRIntegrationFactoryTest {
 
     @Test
     public void create() {
-        when(analytics.getApplication()).thenReturn(null);
         when(factory.create((ValueMap) any(), (Analytics) any())).thenCallRealMethod();
 
         factory.create(settings, analytics);
