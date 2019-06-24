@@ -125,7 +125,7 @@ public class NielsenDTVRIntegrationFactoryTest {
     }
 
     @Test
-    public void fetchAppSdk() {
+    public void fetchAppSdk() throws JSONException {
         when(factory.fetchAppSdk((ValueMap) any(), (Analytics) any(), ArgumentMatchers.<String, List<AppSdk>>anyMap())).thenCallRealMethod();
         when(factory.reuseAppSdk(anyString(), eq(emptyInstances))).thenReturn(null);
         when(factory.reuseAppSdk(anyString(), eq(maxInstances))).thenReturn(appSdk);

@@ -33,7 +33,14 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
     @Override
     public Integration<AppSdk> create(ValueMap settings, Analytics analytics) {
         Logger logger = analytics.logger(NIELSEN_DTVR_KEY);
-        AppSdk appSdk = fetchAppSdk(settings, analytics, appSdkInstances);
+        AppSdk appSdk;
+
+        try {
+            appSdk = fetchAppSdk(settings, analytics, appSdkInstances);
+        } catch (JSONException e) {
+            logger.error(e, "Failed to initialize Nielsen SDK");
+            return null;
+        }
 
         @SuppressWarnings("unchecked")
         List<String> id3EventNames = (List<String>) settings.get(SETTING_ID3_EVENTS_KEY);
@@ -56,22 +63,17 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
      * @param analytics analytics object provided to the factory
      * @return AppSdk instance to use in integration
      */
-    AppSdk fetchAppSdk(ValueMap settings, Analytics analytics, Map<String, List<AppSdk>> appSdkInstances) {
+    AppSdk fetchAppSdk(ValueMap settings, Analytics analytics, Map<String, List<AppSdk>> appSdkInstances) throws JSONException {
         String appId = settings.getString(SETTING_APP_ID_KEY);
 
         AppSdk appSdk = reuseAppSdk(appId, appSdkInstances);
         if (appSdk == null) {
             Context appContext = analytics.getApplication();
 
-            try {
-                JSONObject appSdkConfig = parseAppSdkConfig(settings);
+            JSONObject appSdkConfig = parseAppSdkConfig(settings);
 
-                appSdk = createAppSdk(appContext, appSdkConfig);
-                saveAppSdk(appId, appSdk, appSdkInstances);
-            } catch (JSONException e) {
-                Logger.with(Analytics.LogLevel.DEBUG).error(e, "Failed to initialize Nielsen SDK");
-                return null;
-            }
+            appSdk = createAppSdk(appContext, appSdkConfig);
+            saveAppSdk(appId, appSdk, appSdkInstances);
         }
 
         return appSdk;
