@@ -28,7 +28,7 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
     static final String SETTING_SF_CODE_KEY = "sfcode";
     static final String SETTING_ID3_EVENTS_KEY = "sendId3Events";
     static final String SETTING_ID3_PROPERTY_KEY = "id3Property";
-    static final String SETTING_ID3_PROPERTY_DEFAULT = "Id3";
+    static final String SETTING_ID3_PROPERTY_DEFAULT = "id3";
 
     @Override
     public Integration<AppSdk> create(ValueMap settings, Analytics analytics) {
@@ -42,12 +42,10 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
             return null;
         }
 
-        @SuppressWarnings("unchecked")
-        List<String> id3EventNames = (List<String>) settings.get(SETTING_ID3_EVENTS_KEY);
-        String id3Property = settings.getString(SETTING_ID3_PROPERTY_KEY);
-        String id3PropertyName = isNullOrEmpty(id3Property) ? SETTING_ID3_PROPERTY_DEFAULT : id3Property;
+        List<String> id3EventNames = parseId3EventNames(settings);
+        String id3PropertyName = parseId3PropertyName(settings);
 
-        return createNielsenIntegration(appSdk, logger, id3EventNames, id3PropertyName);
+        return new NielsenDTVRIntegration(appSdk, logger, id3EventNames, id3PropertyName);
     }
 
     @Override
@@ -72,7 +70,7 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
 
             JSONObject appSdkConfig = parseAppSdkConfig(settings);
 
-            appSdk = createAppSdk(appContext, appSdkConfig);
+            appSdk = new AppSdk(appContext, appSdkConfig, null);
             saveAppSdk(appId, appSdk, appSdkInstances);
         }
 
@@ -94,18 +92,6 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
         }
 
         return null;
-    }
-
-    /**
-     * object construction method to facilitate testing;
-     * creates a new AppSdk instance
-     *
-     * @param appContext application context
-     * @param appSdkConfig parameters for initializing the Nielsen App SDK
-     * @return new instance of an AppSdk
-     */
-    AppSdk createAppSdk(Context appContext, JSONObject appSdkConfig) {
-        return new AppSdk(appContext, appSdkConfig, null);
     }
 
     /**
@@ -143,15 +129,31 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
     }
 
     /**
-     * object construction method to facilitate testing;
+     * retrieves lowercase list of id3 event names from settings
      *
-     * @param appSdk Nielsen App Sdk instance to be used in integration
-     * @param logger logger for debugging
-     * @param id3EventNames list of event names that should map to a sendID3 event
-     * @param id3PropertyName property name to fetch the id3 value from
-     * @return new instance of an Nielsen DTVR Integration
+     * @param settings integration settings
+     * @return list of lower case id3 event names
      */
-    Integration<AppSdk> createNielsenIntegration(AppSdk appSdk, Logger logger, List<String> id3EventNames, String id3PropertyName) {
-        return new NielsenDTVRIntegration(appSdk, logger, id3EventNames, id3PropertyName);
+    List<String> parseId3EventNames(ValueMap settings) {
+        @SuppressWarnings("unchecked")
+        List<String> id3EventNames = (List<String>) settings.get(SETTING_ID3_EVENTS_KEY);
+
+        for (int i = 0; i < id3EventNames.size(); ++i) {
+            id3EventNames.set(i, id3EventNames.get(i).toLowerCase());
+        }
+
+        return id3EventNames;
+    }
+
+    /**
+     * retrieves id3 property name from settings, otherwise uses default value
+     *
+     * @param settings integration settings
+     * @return custom id3 property name, otherwise {@link #SETTING_ID3_PROPERTY_DEFAULT}
+     */
+    String parseId3PropertyName(ValueMap settings) {
+        String id3Property = settings.getString(SETTING_ID3_PROPERTY_KEY);
+
+        return isNullOrEmpty(id3Property) ? SETTING_ID3_PROPERTY_DEFAULT : id3Property;
     }
 }

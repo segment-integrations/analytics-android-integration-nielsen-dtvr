@@ -55,7 +55,7 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
                 stop();
         }
 
-        if (id3EventNames.contains(event)) {
+        if (id3EventNames.contains(event.toLowerCase())) {
             sendID3(trackPayload);
         }
     }
