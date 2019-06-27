@@ -42,7 +42,7 @@ public class NielsenDTVRIntegrationTest {
         return argThat(new JSONMatcher(expected));
     }
 
-    private final List<String> id3EventNames = Arrays.asList("sendID3a", "sendID3b");
+    private final List<String> id3EventNames = Arrays.asList("sendid3a", "sendid3b");
 
     class JSONMatcher implements ArgumentMatcher<JSONObject> {
         JSONObject expected;
@@ -208,7 +208,7 @@ public class NielsenDTVRIntegrationTest {
         Properties propertiesA = new Properties().putValue(SETTING_ID3_PROPERTY_DEFAULT, id3A);
         Properties propertiesB = new Properties().putValue(SETTING_ID3_PROPERTY_DEFAULT, id3B);
         TrackPayload payloadA = basePayloadBuilder
-                .event("sendID3a")
+                .event("sendid3a")
                 .properties(propertiesA)
                 .build();
 
@@ -222,13 +222,10 @@ public class NielsenDTVRIntegrationTest {
                         .event("not a sendID3")
                         .properties(propertiesA)
                         .build());
-
         verify(appSdk, never()).sendID3(anyString());
 
-
         integration.track(payloadA);
         integration.track(payloadA);
-
         verify(appSdk, times(1)).sendID3(id3A);
 
         integration.track(payloadB);
