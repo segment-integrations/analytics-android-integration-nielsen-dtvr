@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.segment.analytics.android.integrations.nielsendtvr.NielsenDTVRIntegrationFactory.SETTING_APP_ID_KEY;
+import static com.segment.analytics.android.integrations.nielsendtvr.NielsenDTVRIntegrationFactory.SETTING_DEBUG_KEY;
 import static com.segment.analytics.android.integrations.nielsendtvr.NielsenDTVRIntegrationFactory.SETTING_ID3_EVENTS_KEY;
 import static com.segment.analytics.android.integrations.nielsendtvr.NielsenDTVRIntegrationFactory.SETTING_ID3_PROPERTY_DEFAULT;
 import static com.segment.analytics.android.integrations.nielsendtvr.NielsenDTVRIntegrationFactory.SETTING_ID3_PROPERTY_KEY;
@@ -80,13 +81,16 @@ public class NielsenDTVRIntegrationFactoryTest {
                 .put("appid", appid)
                 .put("sfcode", sfcode);
 
-        JSONAssert.assertEquals(factory.parseAppSdkConfig(settings), expectedConfig, JSONCompareMode.STRICT);
+        JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
+
+        settings.put(SETTING_DEBUG_KEY, true);
+        expectedConfig.put("nol_devDebug", "DEBUG");
+        JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
     }
 
     @Test
     public void saveAppSdk() {
-        List<AppSdk> instancesForId = emptyInstances.get(appid);
-        assertNull(instancesForId);
+        List<AppSdk> instancesForId;
 
         factory.saveAppSdk(appid, appSdk, emptyInstances);
         instancesForId = emptyInstances.get(appid);
@@ -113,17 +117,14 @@ public class NielsenDTVRIntegrationFactoryTest {
 
     @Test
     public void parseId3EventNames() {
-        ValueMap settings = new ValueMap();
-        settings.put(SETTING_ID3_EVENTS_KEY, Arrays.asList("sendID3a", "sendID3b"));
-
         List<String> expected = Arrays.asList("sendid3a", "sendid3b");
+        settings.put(SETTING_ID3_EVENTS_KEY, expected);
+
         assertEquals(expected, factory.parseId3EventNames(settings));
     }
 
     @Test
     public void parseId3PropertyName() {
-        ValueMap settings = new ValueMap();
-
         assertEquals(SETTING_ID3_PROPERTY_DEFAULT, factory.parseId3PropertyName(settings));
 
         settings.put(SETTING_ID3_PROPERTY_KEY, "");
