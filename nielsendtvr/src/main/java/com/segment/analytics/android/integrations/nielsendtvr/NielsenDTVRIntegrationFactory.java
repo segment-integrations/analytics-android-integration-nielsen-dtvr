@@ -29,7 +29,7 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
     static final String SETTING_ID3_EVENTS_KEY = "sendId3Events";
     static final String SETTING_ID3_PROPERTY_KEY = "id3Property";
     static final String SETTING_ID3_PROPERTY_DEFAULT = "id3";
-    static final String SETTING_DEBUG_KEY = "Debug";
+    static final String SETTING_DEBUG_KEY = "debug";
 
     @Override
     public Integration<AppSdk> create(ValueMap settings, Analytics analytics) {
