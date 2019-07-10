@@ -2,6 +2,7 @@ package com.segment.analytics.android.integrations.nielsendtvr.sampleapp;
 
 import android.app.Application;
 
+import com.segment.analytics.android.integrations.nielsendtvr.sampleapp.BuildConfig;
 import com.segment.analytics.Analytics;
 import com.segment.analytics.android.integrations.nielsendtvr.NielsenDTVRIntegration;
 

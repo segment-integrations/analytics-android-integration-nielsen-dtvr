@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 28
+    buildToolsVersion '28.0.2'
 
     defaultConfig {
         applicationId "com.segment.analytics.android.integrations.nielsendtvr.sampleapp"
@@ -15,13 +16,32 @@ android {
     }
 
     buildTypes.each {
-        it.buildConfigField "String", "WRITE_KEY", SEGMENT_WRITE_KEY
+        it.buildConfigField "String", "WRITE_KEY", "\"${SEGMENT_WRITE_KEY}\""
     }
 
 }
 
 dependencies {
-    implementation project(':nielsendtvr')
+    repositories {
+        mavenCentral()
+        jcenter()
+        google()
+        maven {
+            url 'https://raw.githubusercontent.com/NielsenDigitalSDK/nielsenappsdk-android/master/'
+            credentials {
+                // Make sure you add nielsen_user and nielsen_authCode with respective nielsen provided
+                // values to global gradle.properties file
+                // See https://engineeringportal.nielsen.com/docs/Digital_Measurement_Android_Artifactory_Guide
+                username = NIELSEN_USER
+                password = NIELSEN_AUTHCODE
+            }
+            authentication {
+                basic(BasicAuthentication)
+            }
+        }
+    }
+
+    implementation rootProject
     implementation fileTree(dir: 'libs', include: ['*.jar'])
 
     implementation 'com.android.support:appcompat-v7:28.0.0'

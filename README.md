@@ -30,6 +30,21 @@ analytics = new Analytics.Builder(this, "write_key")
                 .build();
 ```
 
+## Local testing
+The following project properties are required to run the tests or build locally:
+* `SEGMENT_WRITE_KEY`: For the sample app
+* `nielsen_user`: For getting the Nielsen SDK
+* `NIELSEN_AUTHCODE`: For getting the Nielsen SDK
+
+To get more information, see [Nielsen official documentation](https://engineeringportal.nielsen.com/docs/Digital_Measurement_Android_Artifactory_Guide).
+
+An easy way to have this configuration set up is using env vars:
+```bash
+export ORG_GRADLE_PROJECT_SEGMENT_WRITE_KEY=foo
+export ORG_GRADLE_PROJECT_NIELSEN_USER=bar
+export ORG_GRADLE_PROJECT_NIELSEN_AUTHCODE=foo_secret
+```
+
 ## License
 
 ```

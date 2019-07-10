@@ -1,1 +1,1 @@
-include ':nielsendtvr', ':sampleapp'
+include '', ':sampleapp'
