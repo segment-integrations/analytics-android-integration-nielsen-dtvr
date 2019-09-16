@@ -52,7 +52,7 @@ public class NielsenDTVRIntegrationFactoryTest {
     private NielsenDTVRIntegrationFactory factory;
 
     private final String appid = "testappid";
-    private final String sfcode = "testsfcode";
+    private final String sfcode = "";
 
     @Before
     public void init() {
@@ -79,7 +79,7 @@ public class NielsenDTVRIntegrationFactoryTest {
     public void parseAppSdkConfig() throws JSONException {
         JSONObject expectedConfig = new JSONObject()
                 .put("appid", appid)
-                .put("sfcode", sfcode);
+                .put("sfcode", "us");
 
         JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
 

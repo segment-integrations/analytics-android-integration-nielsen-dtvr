@@ -89,8 +89,13 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
       if (properties.containsKey("channel"))
         jsonMetadata.put("channelName", properties.getString("channel"));
 
-      if (properties.containsKey("load_type"))
-        jsonMetadata.put("adModel", properties.getString("load_type").equals("linear") ? "1" : "2");
+      String loadType = "";
+      if (properties.containsKey("load_type")) loadType = "load_type";
+
+      if (properties.containsKey("loadType")) loadType = "loadType";
+
+      if (!loadType.isEmpty())
+        jsonMetadata.put("adModel", properties.getString(loadType).equals("dynamic") ? "2" : "1");
 
     } catch (JSONException e) {
       logger.error(e, "Failed to send loadMetadata event");

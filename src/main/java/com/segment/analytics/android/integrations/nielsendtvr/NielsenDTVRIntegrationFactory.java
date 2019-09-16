@@ -106,9 +106,11 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
    */
   JSONObject parseAppSdkConfig(ValueMap settings) throws JSONException {
     JSONObject appSdkConfig = new JSONObject();
-    appSdkConfig
-        .put("appid", settings.getString(SETTING_APP_ID_KEY))
-        .put("sfcode", settings.getString(SETTING_SF_CODE_KEY));
+    String sfcode = settings.getString(SETTING_SF_CODE_KEY);
+    if (sfcode.isEmpty()) {
+      sfcode = "us";
+    }
+    appSdkConfig.put("appid", settings.getString(SETTING_APP_ID_KEY)).put("sfcode", sfcode);
 
     if (settings.getBoolean(SETTING_DEBUG_KEY, false)) {
       appSdkConfig.put("nol_devDebug", "DEBUG");
