@@ -52,7 +52,7 @@ public class NielsenDTVRIntegrationFactoryTest {
     private NielsenDTVRIntegrationFactory factory;
 
     private final String appid = "testappid";
-    private final String sfcode = "";
+    private final String sfcode = "us";
 
     @Before
     public void init() {
