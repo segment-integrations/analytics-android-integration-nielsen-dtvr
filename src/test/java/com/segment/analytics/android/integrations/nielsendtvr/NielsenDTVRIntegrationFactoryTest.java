@@ -79,7 +79,7 @@ public class NielsenDTVRIntegrationFactoryTest {
     public void parseAppSdkConfig() throws JSONException {
         JSONObject expectedConfig = new JSONObject()
                 .put("appid", appid)
-                .put("sfcode", "us");
+                .put("sfcode", sfcode);
 
         JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
 
