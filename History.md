@@ -1,3 +1,6 @@
+# 0.0.2 (2019-09-23)
+    * Prevent null pointer exception when `sfcode` setting not present.
+
 # 0.0.2 (2019-09-16)
     * Accept `loadType` or `load_type` property.
     * Default `sfcode` setting to "us" unless otherwise specified.
