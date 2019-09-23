@@ -109,6 +109,7 @@ class NielsenDTVRIntegrationFactory implements Integration.Factory {
 
     String sfcode = "us";
     if (settings.containsKey(SETTING_SF_CODE_KEY)
+        && settings.getString(SETTING_SF_CODE_KEY) != null
         && !settings.getString(SETTING_SF_CODE_KEY).isEmpty()) {
       sfcode = settings.getString(SETTING_SF_CODE_KEY);
     }

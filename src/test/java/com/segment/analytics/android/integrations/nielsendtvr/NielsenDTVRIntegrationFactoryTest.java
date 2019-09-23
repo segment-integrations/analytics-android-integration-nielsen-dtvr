@@ -116,6 +116,39 @@ public class NielsenDTVRIntegrationFactoryTest {
     }
 
     @Test
+    public void sfcodeKeyMissing() throws JSONException {
+        settings.remove(SETTING_SF_CODE_KEY);
+
+        JSONObject expectedConfig = new JSONObject()
+                .put("appid", appid)
+                .put(SETTING_SF_CODE_KEY, "us");
+
+        JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void emptySfCodeValue() throws JSONException {
+        settings.put(SETTING_SF_CODE_KEY, "");
+
+        JSONObject expectedConfig = new JSONObject()
+                .put("appid", appid)
+                .put("sfcode", sfcode);
+
+        JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void nullSfCodeValue() throws JSONException {
+        settings.put(SETTING_SF_CODE_KEY, null);
+
+        JSONObject expectedConfig = new JSONObject()
+                .put("appid", appid)
+                .put("sfcode", sfcode);
+
+        JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
+    }
+
+    @Test
     public void parseId3EventNames() {
         List<String> expected = Arrays.asList("sendid3a", "sendid3b");
         settings.put(SETTING_ID3_EVENTS_KEY, expected);
