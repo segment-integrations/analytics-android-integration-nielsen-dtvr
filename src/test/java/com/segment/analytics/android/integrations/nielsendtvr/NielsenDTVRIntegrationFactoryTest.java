@@ -52,7 +52,7 @@ public class NielsenDTVRIntegrationFactoryTest {
     private NielsenDTVRIntegrationFactory factory;
 
     private final String appid = "testappid";
-    private final String sfcode = "";
+    private final String sfcode = "us";
 
     @Before
     public void init() {
@@ -79,7 +79,7 @@ public class NielsenDTVRIntegrationFactoryTest {
     public void parseAppSdkConfig() throws JSONException {
         JSONObject expectedConfig = new JSONObject()
                 .put("appid", appid)
-                .put("sfcode", "us");
+                .put("sfcode", sfcode);
 
         JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
 
@@ -113,6 +113,39 @@ public class NielsenDTVRIntegrationFactoryTest {
         reset(factoryMock);
         factoryMock.fetchAppSdk(settings, analytics, maxInstances);
         verify(factoryMock, never()).saveAppSdk(anyString(), (AppSdk) any(), ArgumentMatchers.<String, List<AppSdk>>anyMap());
+    }
+
+    @Test
+    public void sfcodeKeyMissing() throws JSONException {
+        settings.remove(SETTING_SF_CODE_KEY);
+
+        JSONObject expectedConfig = new JSONObject()
+                .put("appid", appid)
+                .put(SETTING_SF_CODE_KEY, "us");
+
+        JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void emptySfCodeValue() throws JSONException {
+        settings.put(SETTING_SF_CODE_KEY, "");
+
+        JSONObject expectedConfig = new JSONObject()
+                .put("appid", appid)
+                .put("sfcode", sfcode);
+
+        JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
+    }
+
+    @Test
+    public void nullSfCodeValue() throws JSONException {
+        settings.put(SETTING_SF_CODE_KEY, null);
+
+        JSONObject expectedConfig = new JSONObject()
+                .put("appid", appid)
+                .put("sfcode", sfcode);
+
+        JSONAssert.assertEquals(expectedConfig, factory.parseAppSdkConfig(settings), JSONCompareMode.STRICT);
     }
 
     @Test
