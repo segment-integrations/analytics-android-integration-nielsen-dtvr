@@ -1,4 +1,4 @@
-# 0.0.2 (2019-09-23)
+# 0.0.3 (2019-09-23)
     * Prevent null pointer exception when `sfcode` setting not present.
 
 # 0.0.2 (2019-09-16)
