@@ -47,10 +47,9 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
       case "Video Content Completed":
       case "Video Playback Buffer Started":
       case "Video Playback Seek Started":
-        stop();
-        break;
+      case "Video Playback Exited":
       case "Video Playback Completed":
-        end();
+        stop();
         break;
       case "Application Backgrounded":
         stop();
