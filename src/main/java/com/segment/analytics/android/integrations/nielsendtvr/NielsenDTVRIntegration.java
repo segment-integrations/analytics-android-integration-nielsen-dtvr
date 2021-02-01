@@ -47,6 +47,7 @@ public class NielsenDTVRIntegration extends Integration<AppSdk> {
       case "Video Content Completed":
       case "Video Playback Buffer Started":
       case "Video Playback Seek Started":
+      //Nielsen requested Video Playback Completed and new Video Playback Exited event map to stop as end is not used for DTVR
       case "Video Playback Exited":
       case "Video Playback Completed":
         stop();
