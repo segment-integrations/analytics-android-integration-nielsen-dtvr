@@ -2,7 +2,6 @@ version: 2
 jobs:
   build:
     resource_class: large
-    
     docker:
       - image: circleci/android:api-28
         environment:
