@@ -1,3 +1,12 @@
+if (!hasProperty('NIELSEN_USER') && !hasProperty('NIELSEN_AUTHCODE')) {
+    ext.NIELSEN_USER = System.getenv('NIELSEN_USER')
+    ext.NIELSEN_AUTHCODE = System.getenv('NIELSEN_AUTHCODE')
+}
+
+if (!hasProperty('SEGMENT_WRITE_KEY')) {
+    ext.SEGMENT_WRITE_KEY = System.getenv('SEGMENT_WRITE_KEY')
+}
+
 apply plugin: 'com.android.application'
 
 android {

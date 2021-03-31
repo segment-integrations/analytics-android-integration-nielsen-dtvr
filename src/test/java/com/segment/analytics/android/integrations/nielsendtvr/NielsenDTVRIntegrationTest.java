@@ -182,13 +182,23 @@ public class NielsenDTVRIntegrationTest {
     }
 
     @Test
+    public void videoPlaybackExited() {
+        integration.track(
+                basePayloadBuilder
+                        .event("Video Playback Exited")
+                        .build());
+
+        verify(appSdk).stop();
+    }
+
+    @Test
     public void videoPlaybackCompleted() {
         integration.track(
                 basePayloadBuilder
                         .event("Video Playback Completed")
                         .build());
 
-        verify(appSdk).end();
+        verify(appSdk).stop();
     }
 
     @Test
